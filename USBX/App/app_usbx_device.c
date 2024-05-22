@@ -318,7 +318,7 @@ static UINT USBD_ChangeFunction(ULONG Device_State)
   return status;
 }
 /* USER CODE BEGIN 1 */
-VOID USBX_Device_Process(char *msg, int len)
+VOID CDC_Transmit_FS(char *msg, int len)
 {
   ux_device_stack_tasks_run();
   if (msg) {

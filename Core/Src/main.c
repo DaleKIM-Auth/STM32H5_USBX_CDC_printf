@@ -59,7 +59,7 @@ static void MX_GPIO_Init(void);
 /* USER CODE BEGIN 0 */
 int _write(int file, char *ptr, int len)
 {
-	USBX_Device_Process((char*)ptr, len);
+	CDC_Transmit_FS((char*)ptr, len);
 
 	return len;
 }

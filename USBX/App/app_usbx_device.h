@@ -61,8 +61,7 @@ extern "C" {
 UINT MX_USBX_Device_Init(VOID);
 
 /* USER CODE BEGIN EFP */
-//VOID USBX_Device_Process(char *msg);
-VOID USBX_Device_Process(char *msg, int len);
+VOID CDC_Transmit_FS(char *msg, int len);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
