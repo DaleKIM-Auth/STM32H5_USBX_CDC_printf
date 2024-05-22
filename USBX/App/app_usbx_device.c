@@ -38,7 +38,19 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+#define APP_RX_DATA_SIZE   2048
+#define APP_TX_DATA_SIZE   2048
 
+/* Rx/TX flag */
+#define RX_NEW_RECEIVED_DATA      0x01
+#define TX_NEW_TRANSMITTED_DATA   0x02
+
+/* Data length for vcp */
+#define VCP_WORDLENGTH8  8
+#define VCP_WORDLENGTH9  9
+
+/* the minimum baudrate */
+#define MIN_BAUDRATE     9600
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -55,7 +67,7 @@ static ULONG cdc_acm_configuration_number;
 static UX_SLAVE_CLASS_CDC_ACM_PARAMETER cdc_acm_parameter;
 
 /* USER CODE BEGIN PV */
-
+extern PCD_HandleTypeDef         hpcd_USB_DRD_FS;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -83,7 +95,7 @@ UINT MX_USBX_Device_Init(VOID)
   UCHAR *pointer;
 
   /* USER CODE BEGIN MX_USBX_Device_Init0 */
-
+  MX_USB_PCD_Init();
   /* USER CODE END MX_USBX_Device_Init0 */
   pointer = ux_device_byte_pool_buffer;
 
@@ -153,7 +165,17 @@ UINT MX_USBX_Device_Init(VOID)
   }
 
   /* USER CODE BEGIN MX_USBX_Device_Init1 */
+  /* Set Rx and Tx FIFO */
+  HAL_PCDEx_PMAConfig(&hpcd_USB_DRD_FS, 0x00, PCD_SNG_BUF, 0x14);
+  HAL_PCDEx_PMAConfig(&hpcd_USB_DRD_FS, 0x80, PCD_SNG_BUF, 0x54);
+  HAL_PCDEx_PMAConfig(&hpcd_USB_DRD_FS, 0x81, PCD_SNG_BUF, 0x94);
+  HAL_PCDEx_PMAConfig(&hpcd_USB_DRD_FS, 0x01, PCD_SNG_BUF, 0xD4);
+  HAL_PCDEx_PMAConfig(&hpcd_USB_DRD_FS, 0x82, PCD_SNG_BUF, 0x114);
 
+  ux_dcd_stm32_initialize((ULONG)USB_DRD_FS, (ULONG)&hpcd_USB_DRD_FS);
+
+  /* Start the PCD Peripheral */
+  HAL_PCD_Start(&hpcd_USB_DRD_FS);
   /* USER CODE END MX_USBX_Device_Init1 */
 
   return ret;
@@ -296,5 +318,11 @@ static UINT USBD_ChangeFunction(ULONG Device_State)
   return status;
 }
 /* USER CODE BEGIN 1 */
-
+VOID USBX_Device_Process(char *msg, int len)
+{
+  ux_device_stack_tasks_run();
+  if (msg) {
+    message_transmit((UCHAR *)msg, len);
+  }
+}
 /* USER CODE END 1 */

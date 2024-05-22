@@ -33,7 +33,10 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "main.h"
+#include "ux_system.h"
+#include "ux_utility.h"
+#include "ux_device_stack.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -42,8 +45,8 @@ extern "C" {
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
-#define UX_DEVICE_APP_MEM_POOL_SIZE         1024
-#define USBX_DEVICE_MEMORY_STACK_SIZE       512
+#define UX_DEVICE_APP_MEM_POOL_SIZE         8*1024
+#define USBX_DEVICE_MEMORY_STACK_SIZE       4*1024
 
 /* USER CODE BEGIN EC */
 
@@ -58,7 +61,8 @@ extern "C" {
 UINT MX_USBX_Device_Init(VOID);
 
 /* USER CODE BEGIN EFP */
-
+//VOID USBX_Device_Process(char *msg);
+VOID USBX_Device_Process(char *msg, int len);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

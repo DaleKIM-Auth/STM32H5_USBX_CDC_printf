@@ -183,7 +183,7 @@
    is 4096 bytes but can be reduced in memory constrained environments. For cd-rom support in the storage
    class, this value cannot be less than 2048.  */
 
-/* #define UX_SLAVE_REQUEST_DATA_MAX_LENGTH                 4096 */
+#define UX_SLAVE_REQUEST_DATA_MAX_LENGTH                    512
 
 /* Defined, this value includes code to handle storage Multi-Media Commands (MMC). E.g., DVD-ROM. */
 
@@ -362,7 +362,7 @@
 
 /* Defined, class _write is pending ZLP automatically (complete transfer) after buffer is sent.  */
 
-/* #define UX_DEVICE_CLASS_CDC_ACM_WRITE_AUTO_ZLP  */
+#define UX_DEVICE_CLASS_CDC_ACM_WRITE_AUTO_ZLP
 
 /* #define UX_DEVICE_CLASS_PRINTER_WRITE_AUTO_ZLP  */
 

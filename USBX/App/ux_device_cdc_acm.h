@@ -55,7 +55,7 @@ VOID USBD_CDC_ACM_Deactivate(VOID *cdc_acm_instance);
 VOID USBD_CDC_ACM_ParameterChange(VOID *cdc_acm_instance);
 
 /* USER CODE BEGIN EFP */
-
+void message_transmit(UCHAR *msg, ULONG len);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
