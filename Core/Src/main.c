@@ -196,7 +196,7 @@ static void MX_TIM6_Init(void)
 
   /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 15624;
+  htim6.Init.Prescaler = 1953;//3906;//15624;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim6.Init.Period = 1;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -304,7 +304,7 @@ static void MX_GPIO_Init(void)
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	printf("ABC\n");
+	printf("ABCDEFGH\n");
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_8);
 }
 
