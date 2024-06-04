@@ -163,8 +163,8 @@ VOID USBD_CDC_ACM_ParameterChange(VOID *cdc_acm_instance)
 void find_cdc_acm_in_bulk_ep(void)
 {
   UX_SLAVE_DEVICE *device = &_ux_system_slave->ux_system_slave_device;
-  UX_SLAVE_INTERFACE *interface;
-  UX_SLAVE_ENDPOINT *endpoint;
+  //UX_SLAVE_INTERFACE *interface;
+  //UX_SLAVE_ENDPOINT *endpoint;
 
 #if 1
   cdc_acm->ux_slave_class_cdc_acm_interface = device->ux_slave_device_first_interface->ux_slave_interface_next_interface;
@@ -188,8 +188,8 @@ void find_cdc_acm_in_bulk_ep(void)
 void message_transmit(UCHAR *msg, ULONG len)
 {
   UX_SLAVE_DEVICE *device = &_ux_system_slave->ux_system_slave_device;
-  UX_SLAVE_INTERFACE *interface;
-  UX_SLAVE_ENDPOINT *endpoint;
+  //UX_SLAVE_INTERFACE *interface;
+  //UX_SLAVE_ENDPOINT *endpoint;
   ULONG actual;
 
   /* Check if the device is configured */
