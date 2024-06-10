@@ -160,43 +160,23 @@ VOID USBD_CDC_ACM_ParameterChange(VOID *cdc_acm_instance)
 }
 
 /* USER CODE BEGIN 1 */
-void find_cdc_acm_in_bulk_ep(void)
-{
-  UX_SLAVE_DEVICE *device = &_ux_system_slave->ux_system_slave_device;
-  //UX_SLAVE_INTERFACE *interface;
-  //UX_SLAVE_ENDPOINT *endpoint;
 
-#if 1
-  cdc_acm->ux_slave_class_cdc_acm_interface = device->ux_slave_device_first_interface->ux_slave_interface_next_interface;
-#else
-  interface = device->ux_slave_device_first_interface;
-  while (interface != UX_NULL) {
-    endpoint = interface->ux_slave_interface_first_endpoint;
-    while (endpoint != UX_NULL) {
-      /* NOTE: INPUT YOUR EP ADDRESS MANUALLY! */
-      if (endpoint->ux_slave_endpoint_descriptor.bEndpointAddress == (0x01 & UX_ENDPOINT_IN)) {
-        cdc_acm->ux_slave_class_cdc_acm_interface = interface;
-        return;
-      }
-      endpoint = endpoint->ux_slave_endpoint_next_endpoint;
-    }
-  }
-  interface = interface->ux_slave_interface_next_interface;
-#endif
-}
 
 void message_transmit(UCHAR *msg, ULONG len)
 {
   UX_SLAVE_DEVICE *device = &_ux_system_slave->ux_system_slave_device;
-  //UX_SLAVE_INTERFACE *interface;
+  UX_SLAVE_INTERFACE *interface;
   //UX_SLAVE_ENDPOINT *endpoint;
   ULONG actual;
 
   /* Check if the device is configured */
   if (device->ux_slave_device_state == UX_DEVICE_CONFIGURED && cdc_acm != UX_NULL && len > 0) {
+	  printf("trans\n");
     /* NOTE: need to update the interface which have bulk data-out endpoint. */
-    if (cdc_acm->ux_slave_class_cdc_acm_interface == NULL)
-      find_cdc_acm_in_bulk_ep();
+    if (cdc_acm->ux_slave_class_cdc_acm_interface == NULL){
+	    interface = device->ux_slave_device_first_interface->ux_slave_interface_next_interface;
+	    cdc_acm = interface->ux_slave_interface_class_instance;
+    }     
 
     while (ux_device_class_cdc_acm_write_run(cdc_acm, msg, len, &actual) == UX_SUCCESS) {
       if (len <= actual) {

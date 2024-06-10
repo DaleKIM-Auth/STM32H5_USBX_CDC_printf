@@ -31,6 +31,7 @@
 #include "ux_device_stack.h"
 #include "ux_utility.h"
 
+uint8_t in_reqeust_flag;
 
 static inline void _ux_dcd_stm32_setup_in(UX_DCD_STM32_ED * ed, UX_SLAVE_TRANSFER *transfer_request)
 {
@@ -163,7 +164,7 @@ ULONG                   ed_status;
     ed -> ux_dcd_stm32_ed_status &= ~UX_DCD_STM32_ED_STATUS_SETUP;
     ed -> ux_dcd_stm32_ed_status |= UX_DCD_STM32_ED_STATUS_TASK_PENDING;
     UX_RESTORE
-
+    
     /* Handle different SETUP cases.  */
     switch(ed_status)
     {
@@ -530,6 +531,7 @@ UX_SLAVE_ENDPOINT       *endpoint;
                 transfer_request -> ux_slave_transfer_request_requested_length;
 
 #if defined(UX_DEVICE_STANDALONE)
+         in_reqeust_flag = 1;
         ed -> ux_dcd_stm32_ed_status |= UX_DCD_STM32_ED_STATUS_DONE;
 #else
 

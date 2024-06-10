@@ -319,10 +319,10 @@ static UINT USBD_ChangeFunction(ULONG Device_State)
 }
 /* USER CODE BEGIN 1 */
 VOID CDC_Transmit_FS(char *msg, int len)
-{
-  ux_device_stack_tasks_run();
+{  
   if (msg) {
     message_transmit((UCHAR *)msg, len);
   }
+  ux_device_stack_tasks_run();
 }
 /* USER CODE END 1 */
