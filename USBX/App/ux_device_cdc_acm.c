@@ -50,7 +50,7 @@ UX_SLAVE_CLASS_CDC_ACM  *cdc_acm;
 
 UX_SLAVE_CLASS_CDC_ACM_LINE_CODING_PARAMETER CDC_VCP_LineCoding =
 {
-  115200, /* baud rate */
+  921600, /* baud rate */
   0x00,   /* stop bits-1 */
   0x00,   /* parity - none */
   0x08    /* nb. of bits 8 */
@@ -177,7 +177,7 @@ void message_transmit(UCHAR *msg, ULONG len)
 	    interface = device->ux_slave_device_first_interface->ux_slave_interface_next_interface;
 	    cdc_acm = interface->ux_slave_interface_class_instance;
     }     
-
+    
     while (ux_device_class_cdc_acm_write_run(cdc_acm, msg, len, &actual) == UX_SUCCESS) {
       if (len <= actual) {
         break;

@@ -148,7 +148,7 @@ ULONG                   ed_status;
                             endpoint->ux_slave_endpoint_descriptor.bEndpointAddress,
                             transfer_request->ux_slave_transfer_request_data_pointer,
                             transfer_request->ux_slave_transfer_request_requested_length);
-        printf("pcd_trans\n");
+        printf("pcd_trans _len %ld\n", transfer_request->ux_slave_transfer_request_requested_length);
     }
     else
     {
