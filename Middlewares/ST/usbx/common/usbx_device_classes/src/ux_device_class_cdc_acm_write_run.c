@@ -116,7 +116,8 @@ UINT                        status = 0;
 
     /* As long as the device is in the CONFIGURED state.  */
     if (device -> ux_slave_device_state != UX_DEVICE_CONFIGURED)
-    {        
+    {
+
         /* Error trap. */
         _ux_system_error_handler(UX_SYSTEM_LEVEL_THREAD, UX_SYSTEM_CONTEXT_CLASS, UX_CONFIGURATION_HANDLE_UNKNOWN);
 
@@ -146,7 +147,7 @@ UINT                        status = 0;
 
     /* We are writing to the IN endpoint.  */
     transfer_request =  &endpoint -> ux_slave_endpoint_transfer_request;
-    printf("[1] %d\n", cdc_acm -> ux_device_class_cdc_acm_write_state);
+
     /* Handle state cases.  */
     switch(cdc_acm -> ux_device_class_cdc_acm_write_state)
     {

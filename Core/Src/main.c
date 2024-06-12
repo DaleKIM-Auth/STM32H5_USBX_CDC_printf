@@ -44,39 +44,34 @@
 
 TIM_HandleTypeDef htim6;
 
+UART_HandleTypeDef huart4;
+DMA_HandleTypeDef handle_GPDMA1_Channel0;
+
 PCD_HandleTypeDef hpcd_USB_DRD_FS;
 
 /* USER CODE BEGIN PV */
-uint8_t flag_8khz = 0;
-extern uint8_t in_reqeust_flag;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_GPDMA1_Init(void);
 static void MX_TIM6_Init(void);
+static void MX_UART4_Init(void);
 /* USER CODE BEGIN PFP */
-VOID CDC_ACM_Read_Task(VOID);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int _write(int file, char *ptr, int len)
 {
-#if 0
 	CDC_Transmit_FS((char*)ptr, len);
-#else
-	int DataIdx;
 
-	for(DataIdx = 0; DataIdx < len; DataIdx++){
-		ITM_SendChar(*ptr++);
-	}
-#endif
 	return len;
 }
-uint8_t TxBuffer[] = "ABCDEFGH\n";
-uint32_t status = 0;
-UINT test_flags;
+
 /* USER CODE END 0 */
 
 /**
@@ -108,12 +103,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USBX_Device_Init();
+  MX_GPDMA1_Init();
   MX_TIM6_Init();
+  MX_UART4_Init();
+  MX_USBX_Device_Init();
   /* USER CODE BEGIN 2 */
-
   HAL_TIM_Base_Start_IT(&htim6);
-
   /* USER CODE END 2 */
 
   /* Initialize leds */
@@ -126,30 +121,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  printf("USBX START\n");
-
   while (1)
   {
-#if 1
-	  //status = ux_device_stack_tasks_run();
-	  //if(status == UX_STATE_RESET)
-	  //{		  
-		  CDC_Transmit_FS((char*)TxBuffer, sizeof(TxBuffer));
-      test_flags = 1;
-	  //}
-	  if(flag_8khz == 1){
-		  //printf("ABCDEFGH\n");
-		  //CDC_Transmit_FS((char*)TxBuffer, sizeof(TxBuffer));
-		  flag_8khz = 0;
-	  }
-#endif
-	  //ux_device_stack_tasks_run();
-	  //CDC_ACM_Read_Task();
-	  //if(in_reqeust_flag == 1){
-	  //	  printf("ABCDEFG\n");
-	  //	printf("ABCDEFG\n");
-	  //	  in_reqeust_flag = 0;
-	  //}
+	  MX_USBX_Device_Process(NULL);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -211,6 +185,34 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief GPDMA1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPDMA1_Init(void)
+{
+
+  /* USER CODE BEGIN GPDMA1_Init 0 */
+
+  /* USER CODE END GPDMA1_Init 0 */
+
+  /* Peripheral clock enable */
+  __HAL_RCC_GPDMA1_CLK_ENABLE();
+
+  /* GPDMA1 interrupt Init */
+    HAL_NVIC_SetPriority(GPDMA1_Channel0_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(GPDMA1_Channel0_IRQn);
+
+  /* USER CODE BEGIN GPDMA1_Init 1 */
+
+  /* USER CODE END GPDMA1_Init 1 */
+  /* USER CODE BEGIN GPDMA1_Init 2 */
+
+  /* USER CODE END GPDMA1_Init 2 */
+
+}
+
+/**
   * @brief TIM6 Initialization Function
   * @param None
   * @retval None
@@ -228,7 +230,7 @@ static void MX_TIM6_Init(void)
 
   /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 15624;
+  htim6.Init.Prescaler = 31249;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim6.Init.Period = 1;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -245,6 +247,54 @@ static void MX_TIM6_Init(void)
   /* USER CODE BEGIN TIM6_Init 2 */
 
   /* USER CODE END TIM6_Init 2 */
+
+}
+
+/**
+  * @brief UART4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_UART4_Init(void)
+{
+
+  /* USER CODE BEGIN UART4_Init 0 */
+
+  /* USER CODE END UART4_Init 0 */
+
+  /* USER CODE BEGIN UART4_Init 1 */
+
+  /* USER CODE END UART4_Init 1 */
+  huart4.Instance = UART4;
+  huart4.Init.BaudRate = 115200;
+  huart4.Init.WordLength = UART_WORDLENGTH_8B;
+  huart4.Init.StopBits = UART_STOPBITS_1;
+  huart4.Init.Parity = UART_PARITY_NONE;
+  huart4.Init.Mode = UART_MODE_TX_RX;
+  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart4.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart4.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart4, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart4, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(&huart4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN UART4_Init 2 */
+
+  /* USER CODE END UART4_Init 2 */
 
 }
 
@@ -298,8 +348,8 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
@@ -318,17 +368,12 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_8;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
@@ -340,81 +385,8 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	//printf("ABCDEFGH\n");
-	flag_8khz = 1;
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_8);
-}
-#define APP_RX_DATA_SIZE                          2048
-#define APP_TX_DATA_SIZE                          2048
-
-/* Rx/TX flag */
-#define RX_NEW_RECEIVED_DATA                      0x01
-#define TX_NEW_TRANSMITTED_DATA                   0x02
-
-/* Data received over uart are stored in this buffer */
-uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
-
-/* Data to send over USB CDC are stored in this buffer   */
-uint8_t UserTxBufferFS[] = "ABCDEFGH\n";
-static UINT read_state = UX_STATE_RESET;
-#define APP_CDC_ACM_READ_STATE_TX_START  (UX_STATE_APP_STEP + 0)
-#define APP_CDC_ACM_READ_STATE_TX_WAIT   (UX_STATE_APP_STEP + 1)
-volatile ULONG EventFlag = 0;
-
-VOID CDC_ACM_Read_Task(VOID)
-{
-  UX_SLAVE_DEVICE *device;
-  UX_SLAVE_INTERFACE *data_interface;
-  UX_SLAVE_CLASS_CDC_ACM *cdc_acm;
-  UINT  status;
-  ULONG read_length;
-  static ULONG actual_length;
-
-  /* Get device */
-  device = &_ux_system_slave->ux_system_slave_device;
-
-  /* Check if device is configured */
-  if (device->ux_slave_device_state != UX_DEVICE_CONFIGURED)
-  {
-    read_state = UX_STATE_RESET;
-    return;
-  }
-
-  /* Get Data interface (interface 1) */
-  data_interface = device->ux_slave_device_first_interface->ux_slave_interface_next_interface;
-  cdc_acm =  data_interface->ux_slave_interface_class_instance;
-  read_length = 64;
-
-  /* Run state machine.  */
-  switch(read_state)
-  {
-    case UX_STATE_RESET:
-      read_state = UX_STATE_WAIT;
-      /* Fall through.  */
-    case UX_STATE_WAIT:
-      status = ux_device_class_cdc_acm_read_run(cdc_acm,
-                                                (UCHAR *)UserRxBufferFS, read_length,
-                                                &actual_length);
-      /* Error.  */
-      if (status <= UX_STATE_ERROR)
-      {
-        /* Reset state.  */
-        read_state = UX_STATE_RESET;
-        return;
-      }
-      if (status == UX_STATE_WAIT)
-      {
-          read_state = APP_CDC_ACM_READ_STATE_TX_START;
-      }
-
-    case APP_CDC_ACM_READ_STATE_TX_START:
-    	CDC_Transmit_FS((char*)UserTxBufferFS, sizeof(UserTxBufferFS));
-      read_state = UX_STATE_WAIT;
-      return;
-    default:
-      return;
-  }
+{	
+  printf("ABCDEFG\n");
 }
 /* USER CODE END 4 */
 

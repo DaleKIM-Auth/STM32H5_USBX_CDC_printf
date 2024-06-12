@@ -79,6 +79,7 @@ UX_SLAVE_CLASS              *class_instance;
 ULONG                       class_index;
 UINT                        status;
 
+
     status = UX_STATE_RESET;
 
     /* Run all DCD tasks (pending ISR handle).  */

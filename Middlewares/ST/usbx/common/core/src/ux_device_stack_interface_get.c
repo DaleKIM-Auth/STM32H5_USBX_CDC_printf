@@ -129,7 +129,7 @@ UINT                    status;
 
                 /* Set the phase of the transfer to data out.  */
                 transfer_request -> ux_slave_transfer_request_phase =  UX_TRANSFER_PHASE_DATA_OUT;
-                printf("get\n");
+
                 /* Send the descriptor with the appropriate length to the host.  */
                 status = dcd -> ux_slave_dcd_function(dcd, UX_DCD_TRANSFER_REQUEST, transfer_request);
 

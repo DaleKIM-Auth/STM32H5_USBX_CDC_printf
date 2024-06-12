@@ -91,6 +91,7 @@ UX_SLAVE_ENDPOINT       *endpoint;
 UX_DCD_STM32_ED         *ed;
 ULONG                   ed_status;
 
+
     /* Get the pointer to the logical endpoint from the transfer request.  */
     endpoint =  transfer_request -> ux_slave_transfer_request_endpoint;
 
@@ -121,8 +122,9 @@ ULONG                   ed_status;
     /* ED transfer in progress.  */
     if (ed_status & UX_DCD_STM32_ED_STATUS_TRANSFER)
     {
-		if (ed_status & UX_DCD_STM32_ED_STATUS_DONE)
+        if (ed_status & UX_DCD_STM32_ED_STATUS_DONE)
         {
+
             /* Keep used, stall and task pending bits.  */
             ed -> ux_dcd_stm32_ed_status &= (UX_DCD_STM32_ED_STATUS_USED |
                                         UX_DCD_STM32_ED_STATUS_STALLED |
@@ -130,7 +132,6 @@ ULONG                   ed_status;
             UX_RESTORE
             return(UX_STATE_NEXT);
         }
-
         UX_RESTORE
         return(UX_STATE_WAIT);
     }
@@ -148,7 +149,6 @@ ULONG                   ed_status;
                             endpoint->ux_slave_endpoint_descriptor.bEndpointAddress,
                             transfer_request->ux_slave_transfer_request_data_pointer,
                             transfer_request->ux_slave_transfer_request_requested_length);
-        printf("pcd_trans _len %ld\n", transfer_request->ux_slave_transfer_request_requested_length);
     }
     else
     {

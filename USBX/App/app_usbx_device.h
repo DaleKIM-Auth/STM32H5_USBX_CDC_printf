@@ -62,6 +62,7 @@ UINT MX_USBX_Device_Init(VOID);
 
 /* USER CODE BEGIN EFP */
 VOID CDC_Transmit_FS(char *msg, int len);
+VOID MX_USBX_Device_Process(VOID *arg);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

@@ -56,6 +56,8 @@ VOID USBD_CDC_ACM_ParameterChange(VOID *cdc_acm_instance);
 
 /* USER CODE BEGIN EFP */
 void message_transmit(UCHAR *msg, ULONG len);
+VOID CDC_ACM_Read_Task(VOID);
+VOID CDC_ACM_Write_Task(VOID);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

@@ -320,11 +320,21 @@ static UINT USBD_ChangeFunction(ULONG Device_State)
   return status;
 }
 /* USER CODE BEGIN 1 */
+/**
+  * @brief MX_USBX_Device_Process
+  *        Run USBX state machine.
+  * @retval None
+  */
+VOID MX_USBX_Device_Process(VOID *arg)
+{
+  ux_device_stack_tasks_run();
+  CDC_ACM_Read_Task();
+  CDC_ACM_Write_Task();
+}
 VOID CDC_Transmit_FS(char *msg, int len)
 {  
   if (msg) {
     message_transmit((UCHAR *)msg, len);
   }
-  ux_device_stack_tasks_run();
 }
 /* USER CODE END 1 */

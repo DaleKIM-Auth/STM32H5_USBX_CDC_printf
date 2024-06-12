@@ -121,7 +121,6 @@ ULONG                   device_state;
 
     /* Process states.  */
     state = transfer_request -> ux_slave_transfer_request_state;
-    printf("[2] %d\n", state);
     switch(state)
     {
     case UX_STATE_RESET:

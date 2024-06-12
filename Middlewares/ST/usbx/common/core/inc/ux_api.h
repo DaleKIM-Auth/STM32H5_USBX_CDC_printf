@@ -1981,7 +1981,6 @@ typedef struct UX_DEVICE_STRUCT
 
 } UX_DEVICE;
 
-
 #if defined(UX_HOST_STANDALONE)
 #define UX_DEVICE_FLAG_LOCK                     0x01u
 #define UX_DEVICE_FLAG_RESET                    0x02u
@@ -2719,6 +2718,7 @@ typedef struct UX_HOST_CLASS_DPUMP_STRUCT
 #define ux_network_driver_init                                  _ux_network_driver_init 
 
 #endif
+
 
 /* Define USBX API prototypes.  */
 
